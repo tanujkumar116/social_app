@@ -3,33 +3,39 @@ import { UserData } from '../context/UserContext';
 import axios from 'axios';
 import { Loader2, UserPlus, UserMinus } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import {PostData} from "../context/PostContext";
 
 const RightNav = () => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [followLoading, setFollowLoading] = useState({});
-    const { user, updateUser } = UserData();
+    const { user } = UserData();
+    const {g_followingposts}=PostData();
 
     useEffect(() => {
         if (user?._id) {
             fetchUsers();
         }
-    }, []);
+    }, [user]);
 
     async function fetchUsers() {
         setLoading(true);
         try {
             const { data } = await axios.get('/api/userall');
             if (Array.isArray(data)) {
-                // Now we'll include both followed and unfollowed users for toggle functionality
-                const otherUsers = data.filter(u => u._id !== user._id).slice(0, 5);
+                const otherUsers = data
+                    .filter(u => u._id !== user._id && user.followings.includes(u._id)!=true)
+                    .slice(0, 5)
+                    .map(u => ({
+                        ...u,
+                        isFollowing: user.followings?.includes(u._id),
+                    }));
                 setUsers(otherUsers);
             } else {
                 setUsers([]);
             }
         } catch (error) {
             console.error("Error fetching users:", error);
-            setUsers([]);
             toast.error("Failed to load suggestions");
         } finally {
             setLoading(false);
@@ -39,19 +45,22 @@ const RightNav = () => {
     async function handleFollowToggle(userId) {
         setFollowLoading(prev => ({ ...prev, [userId]: true }));
         try {
+            
             const { data } = await axios.post(`/api/user/follow/${userId}`);
             toast.success(data.message);
-            
-            // Update local user data
-            const isCurrentlyFollowing = user.followings.includes(userId);
+
+            // Update context
+            const isCurrentlyFollowing = user.followings?.includes(userId);
             const updatedFollowings = isCurrentlyFollowing
                 ? user.followings.filter(id => id !== userId)
-                : [...user.followings, userId];
-                
-            updateUser({ ...user, followings: updatedFollowings });
-            
-            // Refresh users list to reflect changes
-            fetchUsers();
+                : [...(user.followings || []), userId];
+                g_followingposts();
+
+            setUsers(prev =>
+                prev.map(u =>
+                    u._id === userId ? { ...u, isFollowing: !u.isFollowing } : u
+                )
+            );
         } catch (error) {
             console.error("Error updating follow status:", error);
             toast.error("Failed to update follow status");
@@ -60,14 +69,10 @@ const RightNav = () => {
         }
     }
 
-    const isFollowing = (userId) => {
-        return user.followings.includes(userId);
-    };
-
     return (
         <div className="p-6 bg-white shadow-lg rounded-lg border border-gray-100">
             <h2 className="text-lg font-semibold mb-4 text-gray-800">People you may know</h2>
-            
+
             {loading ? (
                 <div className="flex justify-center py-4">
                     <Loader2 className="h-6 w-6 text-gray-400 animate-spin" />
@@ -75,7 +80,7 @@ const RightNav = () => {
             ) : users.length > 0 ? (
                 <div className="space-y-4">
                     {users.map((suggestedUser) => {
-                        const following = isFollowing(suggestedUser._id);
+                        const following = suggestedUser.isFollowing;
                         return (
                             <div key={suggestedUser._id} className="flex items-center justify-between">
                                 <div className="flex items-center">
@@ -85,7 +90,7 @@ const RightNav = () => {
                                             alt={suggestedUser.name}
                                             className="w-12 h-12 rounded-full object-cover border border-gray-200"
                                             onError={(e) => {
-                                                e.target.src = '/images/default-avatar.png';
+                                                e.currentTarget.src = '/images/default-avatar.png';
                                             }}
                                         />
                                     </div>
@@ -125,7 +130,7 @@ const RightNav = () => {
                     <p className="text-gray-500 text-sm">No suggestions available at this time.</p>
                 </div>
             )}
-            
+
             <div className="mt-5 pt-4 border-t border-gray-100">
                 <a href="/explore" className="text-sm text-blue-600 hover:text-blue-800 font-medium">
                     View more connections

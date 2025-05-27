@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FaHome, FaVideo, FaCommentDots, FaUser, FaSearch, FaBars, FaTimes } from "react-icons/fa";
-
+import { MdAddBox } from "react-icons/md";
 const Navigationbar = () => {
   const location = useLocation();
   const [active, setActive] = useState(location.pathname);
@@ -20,6 +20,7 @@ const Navigationbar = () => {
 
   const navItems = [
     { path: "/", label: "Home", icon: <FaHome /> },
+    {path:"/Post",label:"Post",icon:<MdAddBox />},
     { path: "/search", label: "Search", icon: <FaSearch /> },
     { path: "/reels", label: "Reels", icon: <FaVideo /> },
     { path: "/chat", label: "Chat", icon: <FaCommentDots /> },

@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { PostData } from "../context/PostContext";
+import { Plus } from "lucide-react"; // optional, for icon
 
-const AddPost = ({ type }) => {
+const AddPost = () => {
   const [caption, setCaption] = useState("");
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
-  const {addPost,addLoading}=PostData();
+  const [type, setType] = useState("post"); // user selects post or reel
+  const { addPost, addLoading } = PostData();
+
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
     if (selectedFile) {
@@ -16,46 +19,63 @@ const AddPost = ({ type }) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
     if (!file) {
       alert("Please choose a file!");
       return;
     }
-    const formdata=new FormData();
-    formdata.append("caption",caption );
-    formdata.append("file",file);
-    addPost(formdata,setCaption,setFile,setPreview,type); 
-    console.log("Uploading:", { caption, file, type });
+    const formdata = new FormData();
+    formdata.append("caption", caption);
+    formdata.append("file", file);
+    addPost(formdata, setCaption, setFile, setPreview, type);
   };
 
   return (
-    <div className="bg-white p-4 shadow-lg rounded-lg w-96 mx-auto mt-2">
+    <div className="bg-white p-6 shadow-xl rounded-2xl w-full max-w-md mx-auto mt-6 border border-gray-100">
+      <h2 className="text-lg font-semibold text-gray-800 mb-4">Create a Post or Reel</h2>
+
+      {/* Type Selector */}
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700 mb-1">Select Type:</label>
+        <select
+          value={type}
+          onChange={(e) => setType(e.target.value)}
+          className="w-full p-2 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="post">Post (Image)</option>
+          <option value="reel">Reel (Video)</option>
+        </select>
+      </div>
+
       {/* Caption Input */}
       <input
         type="text"
-        placeholder="Enter Caption..."
-        className="w-full p-3 mb-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none 
-                   focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-100 text-gray-700 
-                   placeholder-gray-500 transition duration-300"
+        placeholder="Write a caption..."
+        className="w-full p-3 mb-4 border border-gray-200 rounded-lg bg-gray-50 focus:outline-none 
+                   focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
         value={caption}
         onChange={(e) => setCaption(e.target.value)}
       />
 
       {/* File Input */}
+      <label className="block text-sm text-gray-600 mb-1 font-medium">
+        Upload {type === "post" ? "Image" : "Video"}
+      </label>
       <input
         type="file"
         accept={type === "post" ? "image/*" : "video/*"}
         onChange={handleFileChange}
-        className="w-full mb-3"
+        className="w-full mb-4 file:mr-4 file:py-2 file:px-4 file:rounded-full 
+                   file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 
+                   hover:file:bg-blue-100"
       />
 
       {/* File Preview */}
       {preview && (
-        <div className="mb-3">
+        <div className="mb-4 rounded-lg overflow-hidden border border-gray-200 shadow-sm transition-all duration-300">
           {type === "post" ? (
-            <img src={preview} alt="Preview" className="w-full h-40 object-cover rounded-md shadow-md" />
+            <img src={preview} alt="Preview" className="w-full h-48 object-cover" />
           ) : (
-            <video src={preview} controls className="w-full h-40 rounded-md shadow-md"></video>
+            <video src={preview} controls className="w-full h-48 object-cover" />
           )}
         </div>
       )}
@@ -63,11 +83,8 @@ const AddPost = ({ type }) => {
       {/* Submit Button */}
       <button
         onClick={handleSubmit}
-        className={`px-4 py-2 rounded w-full transition text-white ${
-          addLoading
-            ? "bg-gray-400 cursor-not-allowed"
-            : "bg-blue-600 hover:bg-blue-700"
-        }`}
+        className={`w-full py-2.5 rounded-lg text-white text-sm font-semibold shadow-md transition-all duration-300
+          ${addLoading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:ring-blue-300"}`}
         disabled={addLoading}
       >
         {addLoading ? (
@@ -95,7 +112,10 @@ const AddPost = ({ type }) => {
             Uploading...
           </div>
         ) : (
-          `+ Add ${type === "post" ? "Post" : "Reel"}`
+          <div className="flex items-center justify-center gap-2">
+            <Plus className="w-4 h-4" />
+            <span>Add {type === "post" ? "Post" : "Reel"}</span>
+          </div>
         )}
       </button>
     </div>

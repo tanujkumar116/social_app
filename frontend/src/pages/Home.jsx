@@ -6,7 +6,7 @@ import RightNav from '../components/RightNav';
 
 const Home = () => {
   const { posts, followingposts } = PostData();
-  const [activeTab, setActiveTab] = useState('all'); // Default to 'all' posts tab
+  const [activeTab, setActiveTab] = useState('all'); 
 
   return (
     <div className="h-screen overflow-y-auto p-6 bg-gray-100 flex flex-col ml-50 ">
@@ -35,7 +35,6 @@ const Home = () => {
           </button>
         </div>
       </div>
-
       {/* Main Content Layout */}
       <div className="flex gap-5">
         {/* Posts Section */}

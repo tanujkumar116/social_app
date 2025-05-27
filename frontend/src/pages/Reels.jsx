@@ -27,7 +27,6 @@ const Reels = () => {
         <LoadingScreen />
       ) : (
         <div className="bg-gray-100 min-h-screen flex flex-col items-center py-6">
-          <Addpost type="reel" />
 
           <div className="relative flex flex-col items-center w-[300px] md:w-[500px]">
             {reels && reels.length > 0 ? (

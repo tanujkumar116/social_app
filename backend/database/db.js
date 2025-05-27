@@ -1,29 +1,22 @@
 const mongoose = require("mongoose");
 require("dotenv").config();
 
-const connectdb = async () => {
+const connectDB = async () => {
     try {
         await mongoose.connect(process.env.MONGO_URI, {
             dbName: "socialapp",
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
         });
-        console.log("Database is connected ✅");
-
-        mongoose.connection.on("connected", () => {
-            console.log("Mongoose default connection is open ✅");
-        });
+        console.log("✅ MongoDB connected");
 
         mongoose.connection.on("error", (err) => {
-            console.error("Mongoose connection error ❌", err);
+            console.error("❌ Mongoose error:", err);
         });
-
-        mongoose.connection.on("disconnected", () => {
-            console.log("Mongoose connection is disconnected ⚠️");
-        });
-        
-    } catch (error) {
-        console.error("Database connection failed ❌", error);
+    } catch (err) {
+        console.error("❌ Initial MongoDB connection failed:", err);
         process.exit(1);
     }
 };
 
-module.exports = connectdb;
+module.exports = connectDB;

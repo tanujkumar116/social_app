@@ -2,6 +2,7 @@ import React from 'react'
 import { BrowserRouter,Routes,Route, useNavigate, Navigate } from 'react-router-dom'
 import Home from './pages/Home'
 import Login from './pages/Login'
+import Addpost from "./components/Addpost";
 import Register from './pages/Register'
 import { Toaster } from "react-hot-toast";
 import { UserData } from './context/UserContext'
@@ -44,6 +45,7 @@ const App = () => {
            <Route path="/" element={isAuth ? <Home /> : <Navigate to="/login" />} />
            <Route path="/account" element={isAuth ? <Account user={user} /> : <Navigate to="/login" />} />
            <Route path="/login" element={!isAuth ? <Login /> : <Navigate to="/" />} />
+           <Route path="/Post" element={!isAuth ? <Login/> :<Addpost/> }/>
            <Route path="/user/:id" element={isAuth ? <UserAccount user={user}/> : <Navigate to="/login" />} />
            <Route path="/search" element={isAuth ? <Search /> : <Navigate to="/login" />} />
            <Route path="/chat" element={isAuth ? <ChatPage user={user}/> : <Navigate to="/login" />} />

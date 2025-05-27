@@ -60,7 +60,7 @@ export const UserContextProvider = ({ children }) => {
             setAuth(true);
         } catch (error) {
             console.error("Error fetching user:", error);
-            toast.error("Failed to fetch user data");
+           
             setAuth(false);
         } finally {
             setLoading(false); // Ensures loading stops even on error

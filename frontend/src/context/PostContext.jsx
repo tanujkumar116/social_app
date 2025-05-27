@@ -1,9 +1,11 @@
 import axios from "axios";
 import { createContext, useContext, useState, useEffect } from "react";
+import {UserData} from "./UserContext"
 import { toast } from "react-hot-toast";
 const PostContext = createContext();
 
 export const PostContextProvider = ({ children }) => {
+  const {isAuth}=UserData();
   const [reels, setReels] = useState([]);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -73,11 +75,11 @@ async function commentOnPost(id, comment) {
 async function deleteComment(id,commentId) {
    try{
         const {data}=await axios.post("/api/post/commentdelete/"+id,{commentId});
-        // toast.success(data.message);
+        
    }
    catch(error){
     console.error(error);
-    toast.error("Failed to delete comment on post");
+    
    }
 }
 async function editcaption(id,caption) {
@@ -90,7 +92,7 @@ async function editcaption(id,caption) {
   }
   
 }
-async function follwoingposts() {
+async function g_followingposts() {
   try{
       const {data}=await axios.get("/api/post/follwingposts");
       setfollowingpost(data.posts);
@@ -98,18 +100,18 @@ async function follwoingposts() {
   }
   catch(error){
     console.error(error);
-    toast.error("Failed to delete comment on post");
+    
   }
 }
 
   // Fetch posts when the provider mounts
   useEffect(() => {
     fetchPosts();
-    follwoingposts();
-  }, []);
+    g_followingposts();
+  }, [isAuth]);
 
   return (
-    <PostContext.Provider value={{ reels, posts, loading, fetchPosts,addPost,likePost,commentOnPost,addLoading,deleteComment,deletePost , editcaption,followingposts,followingreels}}>
+    <PostContext.Provider value={{ reels, posts, loading, fetchPosts,addPost,likePost,commentOnPost,addLoading,deleteComment,deletePost , editcaption,followingposts,followingreels,g_followingposts}}>
       {children}
     </PostContext.Provider>
   );
