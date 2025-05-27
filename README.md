@@ -12,6 +12,7 @@ A full-featured **Social Media Application** built with the **MERN Stack (MongoD
 - 🖼️ Upload Profile and Post Images
 - 🔍 Search Users & Posts
 - 👥 Follow/Unfollow Users
+- 💬 Real-time Chat with Socket.io
 - 📱 Responsive UI with React
 - ⚙️ RESTful APIs with Express
 - ☁️ MongoDB Atlas for Data Storage
