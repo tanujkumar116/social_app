@@ -1,0 +1,12 @@
+const express=require("express");
+const isAuth = require("../middlewares/isAuth");
+const uploadFile = require("../middlewares/multer.js");
+const {myProfile,UserProfile,followandUnfollowuser, userfollowerandfollowings, Updateprofile, Updatepassword} = require("../controllers/userController");
+const router=express.Router();
+router.get("/me",isAuth,myProfile);
+router.put("/changepassword",isAuth,Updatepassword);
+router.get("/:id",isAuth,UserProfile);
+router.put("/update",uploadFile,isAuth,Updateprofile);
+router.post("/follow/:id",isAuth,followandUnfollowuser);
+router.get("/followeddata/:id",isAuth,userfollowerandfollowings);
+module.exports=router;

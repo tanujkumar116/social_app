@@ -1,0 +1,14 @@
+const express=require("express");
+const {newPost,deletePost, getAllPosts, likeUnlikePost, commentonPost, deleteComment, editCaption, follwingposts} = require("../controllers/postController");
+const uploadFile = require("../middlewares/multer");
+const isAuth = require("../middlewares/isAuth");
+const router=express.Router();
+router.post("/new",isAuth,uploadFile,newPost); 
+router.post("/delete/:id",isAuth,deletePost);
+router.get("/all",isAuth,getAllPosts);
+router.post("/like/:id",isAuth,likeUnlikePost);
+router.post("/comment/:id",isAuth,commentonPost);
+router.post("/commentdelete/:id",isAuth,deleteComment);
+router.post("/editcaption/:id",isAuth,editCaption);
+router.get("/follwingposts",isAuth,follwingposts);
+module.exports=router;
